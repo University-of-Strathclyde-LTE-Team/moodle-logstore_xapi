@@ -33,20 +33,19 @@ use \tool_log\helper\store as helper_store;
 use \tool_log\helper\reader as helper_reader;
 use \tool_log\helper\buffered_writer as helper_writer;
 use \core\event\base as event_base;
-use \XREmitter\Controller as xapi_controller;
-use \XREmitter\Repository as xapi_repository;
-use \MXTranslator\Controller as translator_controller;
-use \LogExpander\Controller as moodle_controller;
-use \LogExpander\Repository as moodle_repository;
+use \logstore_xapi\emitter\controller as xapi_controller;
+use \logstore_xapi\emitter\repository as xapi_repository;
+use \logstore_xapi\translator\controller as translator_controller;
+use \logstore_xapi\expander\controller as moodle_controller;
+use \logstore_xapi\expander\repository as moodle_repository;
 use \TinCan\RemoteLRS as tincan_remote_lrs;
 use \moodle_exception as moodle_exception;
-use \stdClass as php_obj;
 
 /**
  * This class processes events and enables them to be sent to a logstore.
  *
  */
-class store extends php_obj implements log_writer {
+class store implements log_writer {
     use helper_store;
     use helper_reader;
     use helper_writer;
@@ -101,9 +100,9 @@ class store extends php_obj implements log_writer {
 
         $this->error_log('');
         $this->error_log_value('events', $events);
-        $moodleevents = $moodlecontroller->createEvents($events);
+        $moodleevents = $moodlecontroller->create_events($events);
         $this->error_log_value('moodleevent', $moodleevents);
-        $translatorevents = $translatorcontroller->createEvents($moodleevents);
+        $translatorevents = $translatorcontroller->create_events($moodleevents);
         $this->error_log_value('translatorevents', $translatorevents);
 
         if (empty($translatorevents)) {
@@ -119,7 +118,7 @@ class store extends php_obj implements log_writer {
         }
 
         foreach ($eventbatches as $translatoreventsbatch) {
-            $xapievents = $xapicontroller->createEvents($translatoreventsbatch);
+            $xapievents = $xapicontroller->create_events($translatoreventsbatch);
             $this->error_log_value('xapievents', $xapievents);
         }
 
@@ -143,7 +142,7 @@ class store extends php_obj implements log_writer {
         try {
             $this->connect_xapi_repository();
             return true;
-        } catch (moodle_exception $ex) {
+        } catch (\moodle_exception $ex) {
             debugging('Cannot connect to LRS: ' . $e->getMessage(), DEBUG_DEVELOPER);
             return false;
         }
