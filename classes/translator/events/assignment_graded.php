@@ -12,13 +12,13 @@ class assignment_graded extends module_viewed {
         $scoreraw = (float) ($opts['grade']->grade ?: 0);
         $scoremin = (float) ($opts['grade_items']->grademin ?: 0);
         $scoremax = (float) ($opts['grade_items']->grademax ?: 0);
-        $scorePass = (float) ($opts['grade_items']->gradepass ?: null);
+        $scorepass = (float) ($opts['grade_items']->gradepass ?: null);
         $success = false;
         //if there is no passing score then success is unknown.
-        if ($scorePass == null) {
+        if ($scorepass == null) {
             $success = null;
         }
-        elseif ($scoreraw >= $scorePass) {
+        elseif ($scoreraw >= $scorepass) {
             $success = true;
         }
         //Calculate scaled score as the distance from zero towards the max (or min for negative scores).
